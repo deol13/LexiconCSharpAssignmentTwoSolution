@@ -37,11 +37,6 @@ namespace LexiconCSharpAssignmentTwo
             //Step 1
             if (ReadListOfSecretWordsFromFile())
             {
-                foreach (string word in secretWords)
-                {
-                    Console.WriteLine(word);
-                }
-
                 //Step2
                 ChooseSecretWord(ref secretWord);
 
@@ -62,19 +57,19 @@ namespace LexiconCSharpAssignmentTwo
                     //Step 3
                     ShowVisual(secretWord, correctGuessedLetters, incorrectGuessedLetters, guesses);
                     //Step 4
-                    guessedCorr = ReadInputFromUser(secretWord, correctGuessedLetters, incorrectGuessedLetters, shouldGuessCount);
+                    guessedCorr = ReadInputFromUser(secretWord, correctGuessedLetters, incorrectGuessedLetters, ref shouldGuessCount);
 
                     if (shouldGuessCount)
                     {
                         guesses++;
                     }
 
-                } while (guesses < 10 || !guessedCorr);
+                } while (guesses < 10 && !guessedCorr);
 
                 if(guessedCorr)
-                    Console.WriteLine("Congrats you guessed correctly!");
+                    Console.WriteLine("\nCongrats you guessed correctly!");
                 else
-                    Console.WriteLine("You lost, better luck next time!");
+                    Console.WriteLine("You lost, better luck next time!\n");
 
                 Console.WriteLine("The secret words is: " + secretWord
                     + "\nPress a key to exit the program.");
@@ -143,7 +138,7 @@ namespace LexiconCSharpAssignmentTwo
         //Step 3, process the visual and output it          Should it be divided into 2?
         static void ShowVisual(string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, int guesses)
         {
-            Console.WriteLine("$Number of guesses left: {guesses}\n\n\n\n");
+            Console.WriteLine($"Number of guesses left: {10 - guesses}\n\n\n\n");
 
             //Step 3.1, Show secret word
             //Outputs correctly guessed letters or _ if not correctly guessed
@@ -163,21 +158,23 @@ namespace LexiconCSharpAssignmentTwo
             //Step 3.2, Show incorrect guessed letters
             for (int i = 0; i < incorrectGuessedLetters.Length; i++)
             {
-                Console.WriteLine(incorrectGuessedLetters[i].ToString() + " ");
+                Console.Write(incorrectGuessedLetters[i].ToString() + " ");
             }
+            Console.WriteLine();
         }
 
         //Step 4, wait for input and send it to the right method
-        static bool ReadInputFromUser(string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, bool shouldGuessCount)
+        static bool ReadInputFromUser(string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, ref bool shouldGuessCount)
         {
             bool correctlyGuessedTheWord = false;
 
             Console.Write("Input your guess: ");
             string guess = Console.ReadLine();
+            guess = guess.ToLower();
 
             if (guess.Length == 1)
             {
-                shouldGuessCount = ProcessSingleLetterGuess(secretWord, correctGuessedLetters, incorrectGuessedLetters, guess, shouldGuessCount);
+                shouldGuessCount = ProcessSingleLetterGuess(secretWord, correctGuessedLetters, incorrectGuessedLetters, guess);
             }
             else if (guess.Length > 1)
             {
@@ -190,7 +187,8 @@ namespace LexiconCSharpAssignmentTwo
                 Console.ResetColor();
             }
 
-            if (correctGuessedLetters.Equals(secretWord))
+            string charStr = new string(correctGuessedLetters);
+            if (charStr == secretWord)
             {
                 correctlyGuessedTheWord = true;
             }
@@ -200,19 +198,24 @@ namespace LexiconCSharpAssignmentTwo
         }
 
         //Step 4.1, process guessed letter, then either go back to step 3 or end the program
-        static bool ProcessSingleLetterGuess(string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, string guess, bool shouldGuessCount)
+        static bool ProcessSingleLetterGuess(string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, string guess)
         {
-            bool correct = false;
+            bool shouldGuessCount = true;
 
             char letter = Convert.ToChar(guess);
             if (char.IsLetter(letter))
             {
-                if (!correctGuessedLetters.Contains(letter) || !incorrectGuessedLetters.ToString().Contains(letter))
+                if (!correctGuessedLetters.Contains(letter) && !incorrectGuessedLetters.ToString().Contains(letter))
                 {
                     if (secretWord.Contains(guess))
                     {
-                        correctGuessedLetters[secretWord.IndexOf(guess)] = letter;
-                        correct = true;
+                        for (int i = 0; i < secretWord.Length; i++)
+                        {
+                            if(secretWord[i] == letter)
+                            {
+                                correctGuessedLetters[i] = letter;
+                            }
+                        }
                     }
                     else
                     {
@@ -226,7 +229,7 @@ namespace LexiconCSharpAssignmentTwo
 
             }
 
-            return correct;
+            return shouldGuessCount;
         }
 
         //Step 4.1, process a guessed word, then either go back to step 3 or end the program
@@ -234,7 +237,7 @@ namespace LexiconCSharpAssignmentTwo
         {
             bool correct = false;
 
-            if (correctGuessedLetters.Equals(guess))
+            if (secretWord.Equals(guess))
             {
                 correct = true;
             }
