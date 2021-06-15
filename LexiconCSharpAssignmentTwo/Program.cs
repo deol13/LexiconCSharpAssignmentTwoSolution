@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
@@ -15,6 +16,10 @@ namespace LexiconCSharpAssignmentTwo
         static void Main(string[] args)
         {
             bool isAlive = true;
+            string secretWord = "";
+            char[] correctGuessedLetters;
+            StringBuilder incorrectGuessedLetters = new StringBuilder("", 29);
+
             //Step 1
             if (ReadListOfSecretWordsFromFile())
             {
@@ -22,18 +27,22 @@ namespace LexiconCSharpAssignmentTwo
                 {
                     Console.WriteLine(word);
                 }
-                
-                //Step2
-                chooseSecretWord();
 
+                //Step2
+                ChooseSecretWord(ref secretWord);
+
+                correctGuessedLetters = new char[secretWord.Length];
+
+                /*
                 //Loop
-                while(isAlive)
+                while (isAlive)
                 {
                     //Step 3
-                    showVisual();
+                    ShowVisual(secretWord, correctGuessedLetters, incorrectGuessedLetters);
                     //Step 4
-                    isAlive = processTheGuess();
+                    isAlive = ReadInputFromUser();
                 }
+                */
             }
         }
 
@@ -101,13 +110,29 @@ namespace LexiconCSharpAssignmentTwo
         }
 
         //Step 2, choose a secret word
-        static void chooseSecretWord() { }
+        static void ChooseSecretWord(ref string secretWord) 
+        {
+            Random rnd = new Random();
+
+            int index = rnd.Next(0, secretWords.Length);
+
+            secretWord = secretWords[index];
+        }
 
         //Step 3, process the visual and output it          Should it be divided into 2?
-        static void showVisual() { }
+        static void ShowVisual(string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters) { }
 
-        //Step 4, wait for input and process it, go back to step 3
-        static bool processTheGuess() { return true; }
+        //Step 4, wait for input and send it to the right method
+        static bool ReadInputFromUser() { return true; }
+
+        //Step 5, process guess, then either go back to step 3 or end the program
+        static bool ProcessSingleLetterGuess() 
+        { 
+
+            return true; 
+        }
+
+        static bool ProcessAWordGuess() { return true; }
 
     }
 }
