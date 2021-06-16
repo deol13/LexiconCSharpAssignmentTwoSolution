@@ -20,7 +20,7 @@ namespace LexiconCSharpAssignmentTwo
 
             string secretWord = "";
             char[] correctGuessedLetters;
-            int guesses = 0;
+            int guessCount = 10;
             StringBuilder incorrectGuessedLetters = new StringBuilder("", 29);
 
             //Intro
@@ -55,23 +55,24 @@ namespace LexiconCSharpAssignmentTwo
                     shouldGuessCount = true;
 
                     //Step 3
-                    ShowVisual(secretWord, correctGuessedLetters, incorrectGuessedLetters, guesses);
+                    ShowVisual(secretWord, correctGuessedLetters, incorrectGuessedLetters, guessCount);
                     //Step 4
                     guessedCorr = ReadInputFromUser(secretWord, correctGuessedLetters, incorrectGuessedLetters, ref shouldGuessCount);
 
                     if (shouldGuessCount)
                     {
-                        guesses++;
+                        guessCount--;
                     }
 
-                } while (guesses < 10 && !guessedCorr);
+                } while (guessCount > 0 && !guessedCorr);
 
+                Console.Clear();
                 if(guessedCorr)
                     Console.WriteLine("\nCongrats you guessed correctly!");
                 else
                     Console.WriteLine("You lost, better luck next time!\n");
 
-                Console.WriteLine("The secret words is: " + secretWord
+                Console.WriteLine("The secret words was: " + secretWord
                     + "\nPress a key to exit the program.");
                 Console.ReadKey();
 
@@ -85,16 +86,12 @@ namespace LexiconCSharpAssignmentTwo
             {
                 using (StreamReader sr = new StreamReader(fileName))
                 {
-                    Console.WriteLine("---Beginning of file---\n");
-
                     string line;
 
                     if ((line = sr.ReadToEnd()) != null)
                     {
                         secretWords = line.Split(",");
                     }
-
-                    Console.WriteLine("---End of file---");
                 }
             }   //If for whatever reason the file couldn't be read this will show the message
             catch (IOException e)
@@ -133,12 +130,14 @@ namespace LexiconCSharpAssignmentTwo
             int index = rnd.Next(0, secretWords.Length);
 
             secretWord = secretWords[index];
+
+            secretWord = secretWord.ToLower();
         }
 
         //Step 3, process the visual and output it          Should it be divided into 2?
         static void ShowVisual(string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, int guesses)
         {
-            Console.WriteLine($"Number of guesses left: {10 - guesses}\n\n\n\n");
+            Console.WriteLine($"Number of guesses left: {guesses}\n\n\n\n");
 
             //Step 3.1, Show secret word
             //Outputs correctly guessed letters or _ if not correctly guessed
@@ -158,7 +157,7 @@ namespace LexiconCSharpAssignmentTwo
             //Step 3.2, Show incorrect guessed letters
             for (int i = 0; i < incorrectGuessedLetters.Length; i++)
             {
-                Console.Write(incorrectGuessedLetters[i].ToString() + " ");
+                Console.Write(incorrectGuessedLetters[i] + " ");
             }
             Console.WriteLine();
         }
@@ -168,7 +167,7 @@ namespace LexiconCSharpAssignmentTwo
         {
             bool correctlyGuessedTheWord = false;
 
-            Console.Write("Input your guess: ");
+            Console.Write("Input your guess (All the mystery words are in english): ");
             string guess = Console.ReadLine();
             guess = guess.ToLower();
 
@@ -187,13 +186,8 @@ namespace LexiconCSharpAssignmentTwo
                 Console.ResetColor();
             }
 
-            string charStr = new string(correctGuessedLetters);
-            if (charStr == secretWord)
-            {
-                correctlyGuessedTheWord = true;
-            }
-
-
+            correctlyGuessedTheWord = CheckIfAllLettersCorrectlyGuessed(secretWord, correctGuessedLetters);
+            
             return correctlyGuessedTheWord;
         }
 
@@ -243,6 +237,19 @@ namespace LexiconCSharpAssignmentTwo
             }
 
             return correct;
+        }
+
+        //Step 4.2, Check if all letter are correctly guessed after ProcessSingleLetterGuess
+        static bool CheckIfAllLettersCorrectlyGuessed(string secretWord, char[] correctGuessedLetters)
+        {
+            bool correctlyGuessedTheWord = false;
+            string charStr = new string(correctGuessedLetters);
+            if (charStr == secretWord)
+            {
+                correctlyGuessedTheWord = true;
+            }
+
+            return correctlyGuessedTheWord;
         }
 
     }
