@@ -11,7 +11,7 @@ namespace LexiconCSharpAssignmentTwo
     {
         //static string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\SecretWordsList.txt";
         static string fileName = "SecretWordsList.txt";
-        static string[] secretWords;
+        static string[] secretWordsArray;
 
         static void Main(string[] args)
         {
@@ -90,7 +90,7 @@ namespace LexiconCSharpAssignmentTwo
 
                     if ((line = sr.ReadToEnd()) != null)
                     {
-                        secretWords = line.Split(",");
+                        secretWordsArray = line.Split(",");
                     }
                 }
             }   //If for whatever reason the file couldn't be read this will show the message
@@ -127,9 +127,9 @@ namespace LexiconCSharpAssignmentTwo
         {
             Random rnd = new Random();
 
-            int index = rnd.Next(0, secretWords.Length);
+            int index = rnd.Next(0, secretWordsArray.Length);
 
-            secretWord = secretWords[index];
+            secretWord = secretWordsArray[index];
 
             secretWord = secretWord.ToLower();
         }
