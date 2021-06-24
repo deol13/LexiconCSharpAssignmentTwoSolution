@@ -201,11 +201,16 @@ namespace LexiconCSharpAssignmentTwo
         /// <returns></returns>
         static bool ReadInputFromUser(string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, ref bool shouldGuessCount)
         {
-            bool correctlyGuessedTheWord = false;
-
             Console.Write("Input your guess (All the mystery words are in english): ");
             string guess = Console.ReadLine();
             guess = guess.ToLower();
+
+            return HandlingGuesses(guess, secretWord, correctGuessedLetters, incorrectGuessedLetters, ref shouldGuessCount);
+        }
+
+        static bool HandlingGuesses(string guess, string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, ref bool shouldGuessCount)
+        {
+            bool correctlyGuessedTheWord = false;
 
             if (guess.Length == 1)
             {
