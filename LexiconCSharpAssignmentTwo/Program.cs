@@ -52,6 +52,7 @@ namespace LexiconCSharpAssignmentTwo
                 do
                 {
                     Console.Clear();
+                    Console.WriteLine(secretWord); //////////////////////////////////////////////////////////
                     shouldGuessCount = true;
 
                     //Step 3
@@ -209,6 +210,8 @@ namespace LexiconCSharpAssignmentTwo
             if (guess.Length == 1)
             {
                 shouldGuessCount = ProcessSingleLetterGuess(secretWord, correctGuessedLetters, incorrectGuessedLetters, guess);
+
+                correctlyGuessedTheWord = CheckIfAllLettersCorrectlyGuessed(secretWord, correctGuessedLetters);
             }
             else if (guess.Length > 1)
             {
@@ -221,8 +224,6 @@ namespace LexiconCSharpAssignmentTwo
                 Console.ResetColor();
             }
 
-            correctlyGuessedTheWord = CheckIfAllLettersCorrectlyGuessed(secretWord, correctGuessedLetters);
-            
             return correctlyGuessedTheWord;
         }
 
@@ -263,6 +264,8 @@ namespace LexiconCSharpAssignmentTwo
                                 correctGuessedLetters[i] = letter;
                             }
                         }
+
+                        shouldGuessCount = false;
                     }
                     else
                     {
@@ -275,6 +278,10 @@ namespace LexiconCSharpAssignmentTwo
                     shouldGuessCount = false;
                 }
 
+            }
+            else
+            {
+                shouldGuessCount = false;
             }
 
             return shouldGuessCount;
