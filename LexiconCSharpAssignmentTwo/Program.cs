@@ -18,6 +18,7 @@ namespace LexiconCSharpAssignmentTwo
             bool shouldGuessCount = true;
             bool guessedCorr = false;
 
+            string userGuess = "";
             string secretWord = "";
             char[] correctGuessedLetters;
             int guessCount = 10;
@@ -58,7 +59,9 @@ namespace LexiconCSharpAssignmentTwo
                     //Step 3
                     ShowVisual(secretWord, correctGuessedLetters, incorrectGuessedLetters, guessCount);
                     //Step 4
-                    guessedCorr = ReadInputFromUser(secretWord, correctGuessedLetters, incorrectGuessedLetters, ref shouldGuessCount);
+                    userGuess = ReadInputFromUser();
+
+                    guessedCorr = HandlingGuesses(userGuess, secretWord, correctGuessedLetters, incorrectGuessedLetters, ref shouldGuessCount);
 
                     if (shouldGuessCount)
                     {
@@ -199,13 +202,13 @@ namespace LexiconCSharpAssignmentTwo
         /// <param name="incorrectGuessedLetters"></param>
         /// <param name="shouldGuessCount"></param>
         /// <returns></returns>
-        static bool ReadInputFromUser(string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, ref bool shouldGuessCount)
+        static string ReadInputFromUser()
         {
             Console.Write("Input your guess (All the mystery words are in english): ");
             string guess = Console.ReadLine();
             guess = guess.ToLower();
 
-            return HandlingGuesses(guess, secretWord, correctGuessedLetters, incorrectGuessedLetters, ref shouldGuessCount);
+            return guess;
         }
 
         static bool HandlingGuesses(string guess, string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, ref bool shouldGuessCount)
