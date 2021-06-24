@@ -9,20 +9,15 @@ namespace LexiconCSharpAssignmentTwo
 {
     class Program
     {
-        //static string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\SecretWordsList.txt";
-        static string fileName = "SecretWordsList.txt";
-        static string[] secretWordsArray;
-
         static void Main(string[] args)
         {
             bool shouldGuessCount = true;
             bool guessedCorr = false;
 
             string userGuess = "";
-            string secretWord = "";
-            char[] correctGuessedLetters;
             int guessCount = 10;
-            StringBuilder incorrectGuessedLetters = new StringBuilder("", 29);
+
+            Hangman hangman = new Hangman();
 
             //Intro
             Console.WriteLine("Welcome to hangman, a mystery word will be picked and you will be presented with _ instead of its letter."
@@ -35,19 +30,9 @@ namespace LexiconCSharpAssignmentTwo
 
             Console.WriteLine("\n\n\n\n\n\n");
 
-            //Step 1
-            if (ReadListOfSecretWordsFromFile())
+            try
             {
-                //Step2
-                ChooseSecretWord(ref secretWord);
-
-                //Allocate the memory for the char array now that we know what it's size should be.
-                //Fill it with ' ' so we can check against them when we output.
-                correctGuessedLetters = new char[secretWord.Length];
-                for (int i = 0; i < secretWord.Length; i++)
-                {
-                    correctGuessedLetters[i] = ' ';
-                }
+                hangman.InitiateHangman();
 
                 //Loop
                 do
@@ -57,11 +42,11 @@ namespace LexiconCSharpAssignmentTwo
                     shouldGuessCount = true;
 
                     //Step 3
-                    ShowVisual(secretWord, correctGuessedLetters, incorrectGuessedLetters, guessCount);
+                    ShowVisual(guessCount);
                     //Step 4
                     userGuess = ReadInputFromUser();
 
-                    guessedCorr = HandlingGuesses(userGuess, secretWord, correctGuessedLetters, incorrectGuessedLetters, ref shouldGuessCount);
+                    guessedCorr = HandlingGuesses(userGuess, ref shouldGuessCount);
 
                     if (shouldGuessCount)
                     {
@@ -70,8 +55,9 @@ namespace LexiconCSharpAssignmentTwo
 
                 } while (guessCount > 0 && !guessedCorr);
 
+
                 Console.Clear();
-                if(guessedCorr)
+                if (guessedCorr)
                     Console.WriteLine("\nCongrats you guessed correctly!");
                 else
                     Console.WriteLine("You lost, better luck next time!\n");
@@ -79,10 +65,29 @@ namespace LexiconCSharpAssignmentTwo
                 Console.WriteLine("The secret words was: " + secretWord
                     + "\nPress a key to exit the program.");
                 Console.ReadKey();
-
+            }
+            catch (IOException e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("File error: " + e.Message);
+                Console.ResetColor();
+            }
+            catch (ArgumentNullException)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error: Path is null!");
+                Console.ResetColor();
+            }
+            catch (OutOfMemoryException) //If the line is too long and causes out of memory failure
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("The size of the file is too large!");
+                Console.ResetColor();
             }
         }
 
+
+        /*
         /// <summary>
         /// Step 1, read in the secret words
         /// Reads the entire line from file and splits it into an array. It splits by commas
@@ -152,23 +157,22 @@ namespace LexiconCSharpAssignmentTwo
 
             secretWord = secretWord.ToLower();
         }
+        */
+
 
         /// <summary>
         /// Step 3, process the visual and output it
         /// Loops through the correct guessed array and writes any letters there, if there isn't a letter in an index, it writes an underscore _
         /// Then it goes through incorrent guessed letters stringbuilder to show the user what he/she have guessed
         /// </summary>
-        /// <param name="secretWord"></param>
-        /// <param name="correctGuessedLetters"></param>
-        /// <param name="incorrectGuessedLetters"></param>
         /// <param name="guesses"></param>
-        static void ShowVisual(string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, int guesses)
+        static void ShowVisual(int guesses)
         {
             Console.WriteLine($"Number of guesses left: {guesses}\n\n\n\n");
 
             //Step 3.1, Show secret word
             //Outputs correctly guessed letters or _ if not correctly guessed
-            for (int i = 0; i < secretWord.Length; i++)
+            for (int i = 0; i < correctGuessedLetters.Length; i++)
             {
                 if (correctGuessedLetters[i] != ' ')
                 {
@@ -211,6 +215,8 @@ namespace LexiconCSharpAssignmentTwo
             return guess;
         }
 
+
+        /*
         static bool HandlingGuesses(string guess, string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, ref bool shouldGuessCount)
         {
             bool correctlyGuessedTheWord = false;
@@ -335,6 +341,6 @@ namespace LexiconCSharpAssignmentTwo
 
             return correctlyGuessedTheWord;
         }
-
+        */
     }
 }
