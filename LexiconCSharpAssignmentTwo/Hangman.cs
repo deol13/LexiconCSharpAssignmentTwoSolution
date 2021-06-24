@@ -63,6 +63,8 @@ namespace LexiconCSharpAssignmentTwo
                 {
                     allSecretWordsAsString = line;
                 }
+
+                sr.Close();
             }
 
             return allSecretWordsAsString;
