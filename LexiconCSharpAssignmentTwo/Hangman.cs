@@ -25,6 +25,12 @@ namespace LexiconCSharpAssignmentTwo
 
         }
 
+        /// <summary>
+        /// Here the hangman game is setup.
+        /// The array of secret words are read in from file and sent to a method that
+        /// picks one on random. The container for correctly guessed letters are also
+        /// filled with empty spaces so the program can check against it later.
+        /// </summary>
         public void InitiateHangman()
         {
             string[] secretWordsArray;
@@ -88,6 +94,15 @@ namespace LexiconCSharpAssignmentTwo
             }
         }
 
+        /// <summary>
+        /// Here the different process are called depending on if guess length is 1 (one letter) or longer (a word)
+        /// The calls are separated with an if-statement, if its a letter then the methods also calls 
+        /// CheckIfAllLettersCorrectlyGuessed after to see if all letters have been guessed.
+        /// If the string guess if empty then a message pops up telling the user to enter a guess.
+        /// </summary>
+        /// <param name="guess"></param>
+        /// <param name="shouldGuessCount"></param>
+        /// <returns></returns>
         public bool HandlingGuesses(string guess, ref bool shouldGuessCount)
         {
             bool correctlyGuessedTheWord = false;
