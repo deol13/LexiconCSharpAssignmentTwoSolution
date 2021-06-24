@@ -52,7 +52,7 @@ namespace LexiconCSharpAssignmentTwo
                 do
                 {
                     Console.Clear();
-                    Console.WriteLine(secretWord); //////////////////////////////////////////////////////////
+
                     shouldGuessCount = true;
 
                     //Step 3
