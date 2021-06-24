@@ -16,41 +16,36 @@ namespace LexiconCSharpAssignmentTwo
         char[] correctGuessedLetters;
         StringBuilder incorrectGuessedLetters = new StringBuilder("", 29);
 
+        public string SecretWord { get { return secretWord; } }
+        public char[] CorrectGuessedLetters { get { return correctGuessedLetters; } }
+        public StringBuilder IncorrectGuessedLetters { get { return incorrectGuessedLetters; } }
+
         public Hangman()
         {
 
         }
 
-        public bool InitiateHangman()
+        public void InitiateHangman()
         {
-            bool complete = false;
+            string[] secretWordsArray;
 
-            string[] secretWordsArray = ReadListOfSecretWordsFromFile();
+            string allSecretWordsAsString = ReadListOfSecretWordsFromFile();
+            secretWordsArray = allSecretWordsAsString.Split(",");
 
-            if (complete)
-            {
-                ChooseSecretWord(secretWordsArray);
+            ChooseSecretWord(secretWordsArray);
 
-                correctGuessedLetters = new char[secretWord.Length];
-                for (int i = 0; i < secretWord.Length; i++)
-                {
-                    correctGuessedLetters[i] = ' ';
-                }
-            }
-
-            return complete;
+            FillCorrectGuessedLetters();
         }
 
         /// <summary>
-        /// Step 1, read in the secret words
         /// Reads the entire line from file and splits it into an array. It splits by commas
         /// Catches IOexception and ArgumentNullException if there is any problem with reading/accessing the file
         /// Also catches outOfMemoryException incase the line in file is too long
         /// </summary>
         /// <returns></returns>
-        private string[] ReadListOfSecretWordsFromFile()
+        public string ReadListOfSecretWordsFromFile()
         {
-            string[] secretWordsArray;
+            string allSecretWordsAsString = "";
 
             using (StreamReader sr = new StreamReader(fileName))
             {
@@ -60,20 +55,18 @@ namespace LexiconCSharpAssignmentTwo
                 //And we try to read the entire line in one go then split it by commas into an array
                 if ((line = sr.ReadToEnd()) != null)
                 {
-                    secretWordsArray = line.Split(",");
+                    allSecretWordsAsString = line;
                 }
             }
 
-            return secretWordsArray;
+            return allSecretWordsAsString;
         }
 
-
         /// <summary>
-        /// Step 2, choose a secret word
         /// Randomize an int as index and the word on that index in the secreyWordsArray will be the secret word
         /// </summary>
         /// <param name="secretWord"></param>
-        private void ChooseSecretWord(string[] secretWordsArray)
+        public void ChooseSecretWord(string[] secretWordsArray)
         {
             Random rnd = new Random();
 
@@ -86,19 +79,28 @@ namespace LexiconCSharpAssignmentTwo
             secretWord = secretWord.ToLower();
         }
 
-        public bool HandlingGuesses(string guess, string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, ref bool shouldGuessCount)
+        public void FillCorrectGuessedLetters()
+        {
+            correctGuessedLetters = new char[secretWord.Length];
+            for (int i = 0; i < secretWord.Length; i++)
+            {
+                correctGuessedLetters[i] = ' ';
+            }
+        }
+
+        public bool HandlingGuesses(string guess, ref bool shouldGuessCount)
         {
             bool correctlyGuessedTheWord = false;
 
             if (guess.Length == 1)
             {
-                shouldGuessCount = ProcessSingleLetterGuess(secretWord, correctGuessedLetters, incorrectGuessedLetters, guess);
+                shouldGuessCount = ProcessSingleLetterGuess(guess);
 
-                correctlyGuessedTheWord = CheckIfAllLettersCorrectlyGuessed(secretWord, correctGuessedLetters);
+                correctlyGuessedTheWord = CheckIfAllLettersCorrectlyGuessed();
             }
             else if (guess.Length > 1)
             {
-                correctlyGuessedTheWord = ProcessAWordGuess(secretWord, correctGuessedLetters, guess);
+                correctlyGuessedTheWord = ProcessAWordGuess(guess);
             }
             else
             {
@@ -111,7 +113,6 @@ namespace LexiconCSharpAssignmentTwo
         }
 
         /// <summary>
-        /// Step 4.1, process guessed letter, then either go back to step 3 or end the program
         /// Here the program process a single letter guess by converting it to char because most functions used here takes char not string
         /// Such as IsLetter or when the program checks if the letter already
         /// been guessed by comparing it to whats in correctGuessedLetter and incorrectGuessedLetters.
@@ -119,12 +120,9 @@ namespace LexiconCSharpAssignmentTwo
         /// During the loop, if it finds the letter it adds it to correctGuessedLetters on the same index because they are the same length.
         /// Incorrect guessed letters are added to incorrectGuessedLetters
         /// </summary>
-        /// <param name="secretWord"></param>
-        /// <param name="correctGuessedLetters"></param>
-        /// <param name="incorrectGuessedLetters"></param>
         /// <param name="guess"></param>
         /// <returns></returns>
-        public bool ProcessSingleLetterGuess(string secretWord, char[] correctGuessedLetters, StringBuilder incorrectGuessedLetters, string guess)
+        public bool ProcessSingleLetterGuess(string guess)
         {
             bool shouldGuessCount = true;
 
@@ -171,14 +169,11 @@ namespace LexiconCSharpAssignmentTwo
         }
 
         /// <summary>
-        /// Step 4.1, process a guessed word, then either go back to step 3 or end the program
         /// Just checks if the guessed word is the right word
         /// </summary>
-        /// <param name="secretWord"></param>
-        /// <param name="correctGuessedLetters"></param>
         /// <param name="guess"></param>
         /// <returns></returns>
-        public bool ProcessAWordGuess(string secretWord, char[] correctGuessedLetters, string guess)
+        public bool ProcessAWordGuess(string guess)
         {
             bool correct = false;
 
@@ -191,18 +186,16 @@ namespace LexiconCSharpAssignmentTwo
         }
 
         /// <summary>
-        /// Step 4.2, Check if all letter are correctly guessed after ProcessSingleLetterGuess
         /// Here the program makes a string by sending in the char array correctGuessedLetters.
         /// So it can be checked against the secret words string. 
         /// Both needs to be strings to compare them with the regular == or equal
         /// </summary>
-        /// <param name="secretWord"></param>
-        /// <param name="correctGuessedLetters"></param>
         /// <returns></returns>
-        public bool CheckIfAllLettersCorrectlyGuessed(string secretWord, char[] correctGuessedLetters)
+        public bool CheckIfAllLettersCorrectlyGuessed()
         {
             bool correctlyGuessedTheWord = false;
             string charStr = new string(correctGuessedLetters);
+
             if (charStr == secretWord)
             {
                 correctlyGuessedTheWord = true;
